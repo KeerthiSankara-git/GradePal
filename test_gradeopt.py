@@ -18,8 +18,7 @@ Expected output:
 
 import sys
 import pandas as pd
-from config import VAL_PATH, LABEL_MAP, BATCH_DELAY
-import time
+from config import VAL_PATH, LABEL_MAP
 
 # ── Hardcoded test row (matches full EngSAF schema: all 6 columns) ───────────
 TEST_ROW = {
@@ -41,37 +40,19 @@ ERROR_ROW = {
     "feedback": "The student identified sunlight as an input but missed CO2, water, and the glucose/oxygen outputs.",
 }
 
-# ── 1. grader_agent ──────────────────────────────────────────────────────────
-print("[1/4] grader_agent (label + feedback)", end="", flush=True)
+# ── 1. grader_agent ─────────────────────────────────────────────────────────
+print("[1/4] grader_agent     ", end="", flush=True)
 try:
-    from graders.gradeopt.grader_agent import grade, grade_with_feedback
+    from graders.gradeopt.grader_agent import grade
 
-    # test grade_with_feedback (new combined function)
-    result = grade_with_feedback(
+    pred = grade(
         question=TEST_ROW["Question"],
         student_answer=TEST_ROW["Student Answer"],
         correct_answer=TEST_ROW["Correct Answer"],
         grading_notes="",
     )
-    assert isinstance(result, dict), "Expected dict response"
-    assert result["label"] in (0, 1, 2), f"Expected 0/1/2, got {result['label']}"
-    assert isinstance(result["feedback"], str) and len(result["feedback"]) > 10, "Feedback too short"
-
-    pred = result["label"]
-    print(f"... PASS")
-    print(f"  Label:    {pred} = '{LABEL_MAP[pred]}' (true = '{LABEL_MAP[TEST_ROW['output_label']]}')")
-    print(f"  Feedback: {result['feedback']}")
-    print(f"  Gold:     {TEST_ROW['feedback']}")
-
-    # also verify backward-compatible grade() still returns int
-    pred_int = grade(
-        question=TEST_ROW["Question"],
-        student_answer=TEST_ROW["Student Answer"],
-        correct_answer=TEST_ROW["Correct Answer"],
-        grading_notes="",
-    )
-    assert isinstance(pred_int, int), "grade() should return int"
-
+    assert pred in (0, 1, 2), f"Expected 0/1/2, got {pred}"
+    print(f"... PASS  (predicted label: {pred} = '{LABEL_MAP[pred]}', true = '{LABEL_MAP[TEST_ROW['output_label']]}')")
 except Exception as e:
     print(f"... FAIL\n  {e}")
     sys.exit(1)
@@ -117,47 +98,41 @@ except Exception as e:
     print(f"... FAIL\n  {e}")
     sys.exit(1)
 
-# ── 4. Full pipeline on 5 rows ────────────────────────────────────────────────
+# ── 4. Full pipeline on 5 rows ───────────────────────────────────────────────
 print("[4/4] pipeline (5 rows)", end="", flush=True)
 try:
     df = pd.read_csv(VAL_PATH)
     sample = df.head(5)
 
-    from graders.gradeopt.grader_agent import grade_with_feedback
-    from config import LABEL_MAP, BATCH_DELAY
+    # Monkey-patch VAL_PATH temporarily so pipeline loads only 5 rows
+    # Instead, just call the pipeline helpers directly
+    from graders.gradeopt.grader_agent import grade as _grade
+    from config import LABEL_MAP
 
     preds = []
-    feedbacks = []
-
-    for i, (_, row) in enumerate(sample.iterrows()):
-        result = grade_with_feedback(
+    for _, row in sample.iterrows():
+        p = _grade(
             question=row["Question"],
             student_answer=row["Student Answer"],
             correct_answer=row["Correct Answer"],
             grading_notes="",
         )
-        preds.append(result["label"])
-        feedbacks.append(result["feedback"])
+        preds.append(p)
 
-        if i < len(sample) - 1:
-            time.sleep(BATCH_DELAY)  # use config delay, not hardcoded 13s
-
-    assert len(preds) == 5
-    assert all(p in (0, 1, 2) for p in preds)
-    assert all(isinstance(f, str) for f in feedbacks)
+    assert len(preds) == 5, f"Expected 5 predictions, got {len(preds)}"
+    assert all(p in (0, 1, 2) for p in preds), f"Invalid label in {preds}"
 
     y_true = sample["output_label"].tolist()
     correct = sum(p == t for p, t in zip(preds, y_true))
 
     print(f"... PASS")
     print(f"\n  Results on 5 val rows:")
-    print(f"  {'Question_id':<14} {'True':<18} {'Predicted':<20} {'Feedback snippet'}")
+    print(f"  {'Question_id':<14} {'True':<18} {'Predicted'}")
     for i, (_, row) in enumerate(sample.iterrows()):
         true_str = LABEL_MAP[int(row["output_label"])]
         pred_str = LABEL_MAP[preds[i]]
         match = "✓" if preds[i] == int(row["output_label"]) else "✗"
-        fb_snippet = feedbacks[i][:60] + "..." if len(feedbacks[i]) > 60 else feedbacks[i]
-        print(f"  {str(row['Question_id']):<14} {true_str:<18} {pred_str:<20} {match} {fb_snippet}")
+        print(f"  {str(row['Question_id']):<14} {true_str:<18} {pred_str}  {match}")
     print(f"\n  Exact match: {correct}/5")
 
 except Exception as e:

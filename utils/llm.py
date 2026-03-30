@@ -68,23 +68,16 @@ def call_llm(
     max_tokens: int = 1024,
     retries: int = 3,
     expect_json: bool = False,
-    disable_thinking: bool = False,
 ) -> str:
     """
     Core LLM call. Returns response text.
     All graders/agents should use this — never call genai directly.
     """
-    config_kwargs = {
-        "temperature": temperature,
-        "max_output_tokens": max_tokens,
-        "system_instruction": system if system else "You are a helpful assistant.",
-    }
-    
-    # only disable thinking when explicitly requested
-    if disable_thinking:
-        config_kwargs["thinking_config"] = types.ThinkingConfig(thinking_budget=0)
-    
-    config = types.GenerateContentConfig(**config_kwargs)
+    config = types.GenerateContentConfig(
+        temperature=temperature,
+        max_output_tokens=max_tokens,
+        system_instruction=system if system else "You are a helpful assistant.",
+    )
 
     last_error: Optional[Exception] = None
 
