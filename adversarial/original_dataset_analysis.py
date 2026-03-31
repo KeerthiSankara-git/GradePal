@@ -141,8 +141,7 @@ def per_question_distribution(df, question_col="Question", qid_col="Question_id"
         .reset_index()
     )
     
-    # Rename columns for clarity
-    grouped.columns.name = None  # remove multi-index name
+    grouped.columns.name = None  
     grouped = grouped.rename(columns={
         0: "label_0",
         1: "label_1",
