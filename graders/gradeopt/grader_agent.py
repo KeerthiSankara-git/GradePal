@@ -36,17 +36,11 @@ Student Answer:
 {notes_block}
 Grade the student's answer against the correct answer.
 
-Use these labels exactly:
-- incorrect
-- partially correct
-- correct
-
-Rules:
-- correct = the student fully understood and answered the question.
-- partially correct = the student showed some understanding but missed key points.
-- incorrect = the student misunderstood or did not address the question.
-
-Reply with exactly ONE label and nothing else.
+{notes_block}
+Output ONLY one of these three options with no other text:
+incorrect
+partially correct
+correct
 """
 
 
@@ -123,7 +117,7 @@ def grade(
         prompt,
         system=SYSTEM,
         temperature=0.0,
-        max_tokens=32,
+        max_tokens=128,
         retries=3,
         expect_json=False,
     )
