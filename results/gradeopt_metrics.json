@@ -1,0 +1,10 @@
+[
+  {
+    "split": "iter_1_val",
+    "accuracy": 0.6413,
+    "quadratic_wk": 0.6072,
+    "weighted_f1": 0.6386,
+    "macro_f1": 0.6539,
+    "iteration": 1
+  }
+]

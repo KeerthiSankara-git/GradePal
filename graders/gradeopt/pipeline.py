@@ -50,8 +50,12 @@ def grade_all(df: pd.DataFrame, grading_notes: dict) -> tuple[list[int], list[st
     
     preds = []
     feedbacks = []
+    total = len(df)
     
     for i, (_, row) in enumerate(df.iterrows()):
+
+        if i % 10 == 0:
+            print(f"    progress: {i}/{total} rows", end="\r")
         qid = str(row["Question_id"])
         notes = grading_notes.get(qid, "")
 
@@ -217,7 +221,7 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
         print(
             f"{m['iteration']:<6} "
             f"{m.get('accuracy', 0):<12.4f} "
-            f"{m.get('qwk', 0):<10.4f} "
+            f"{m.get('quadratic_wk', 0):<10.4f} "
             f"{m.get('weighted_f1', 0):.4f}"
         )
     print("=" * 60)
