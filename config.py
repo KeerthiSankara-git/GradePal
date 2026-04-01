@@ -24,4 +24,4 @@ LABEL_MAP = {0: "incorrect", 1: "partially correct", 2: "correct"}
 LABEL_MAP_INV = {"incorrect": 0, "partially correct": 1, "correct": 2}
 
 #  Rate limiting 
-BATCH_DELAY = 4.0  # seconds between calls on free tier
+BATCH_DELAY = 15.0  # seconds between calls on free tier

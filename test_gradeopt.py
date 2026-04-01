@@ -19,6 +19,7 @@ Expected output:
 import sys
 import pandas as pd
 from config import VAL_PATH, LABEL_MAP
+import time
 
 # ── Hardcoded test row (matches full EngSAF schema: all 6 columns) ───────────
 TEST_ROW = {
@@ -110,7 +111,7 @@ try:
     from config import LABEL_MAP
 
     preds = []
-    for _, row in sample.iterrows():
+    for i, (_, row) in enumerate(sample.iterrows()):
         p = _grade(
             question=row["Question"],
             student_answer=row["Student Answer"],
@@ -118,6 +119,9 @@ try:
             grading_notes="",
         )
         preds.append(p)
+        if i < len(sample) - 1:
+            time.sleep(13)  # 13s gap = safe buffer
+    
 
     assert len(preds) == 5, f"Expected 5 predictions, got {len(preds)}"
     assert all(p in (0, 1, 2) for p in preds), f"Invalid label in {preds}"
