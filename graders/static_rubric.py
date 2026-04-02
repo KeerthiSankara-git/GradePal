@@ -28,6 +28,17 @@ Student Answer: {student_answer}
 
 Grade:"""
 
+def parse_label(text: str) -> int:
+    text = text.strip().lower()
+    text = text.replace(".", "").replace(",", "").strip()
+    if "partially correct" in text or text.startswith("part"):
+        return 1
+    if "incorrect" in text:
+        return 0
+    if "correct" in text:
+        return 2
+    return 0
+
 def main():
     # Define paths
     results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../results'))
@@ -66,7 +77,8 @@ def main():
                 system=SYSTEM_PROMPT, 
                 temperature=0.0, 
                 max_tokens=32, 
-                model=GEMINI_MODEL  
+                model=GEMINI_MODEL,
+                disable_thinking=True  # Disable thinking for faster responses 
             )
             clean_text = raw_response.strip().lower()
         except Exception as e:
@@ -78,7 +90,8 @@ def main():
             clean_text = "error" 
         
         # Convert label to score
-        pred_int = LABEL_MAP_INV.get(clean_text, 0)
+        # pred_int = LABEL_MAP_INV.get(clean_text, 0)
+        pred_int = parse_label(clean_text)
         predicted_labels.append(pred_int)
         
         # 3. SAVE PROGRESS IMMEDIATELY
