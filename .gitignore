@@ -7,4 +7,3 @@ results/*.png
 data/
 rubrics/
 *.csv
-*.json

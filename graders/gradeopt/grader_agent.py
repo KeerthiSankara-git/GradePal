@@ -140,6 +140,12 @@ def grade_with_feedback(
             'feedback': str
         }
     """
+
+    # handle NaN values from pandas
+    question       = str(question)       if question       and str(question)       != "nan" else ""
+    student_answer = str(student_answer) if student_answer and str(student_answer) != "nan" else ""
+    correct_answer = str(correct_answer) if correct_answer and str(correct_answer) != "nan" else ""
+    
     prompt = GRADER_PROMPT.format(
         question=question.strip(),
         correct_answer=correct_answer.strip(),

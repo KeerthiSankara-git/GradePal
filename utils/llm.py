@@ -65,7 +65,7 @@ def call_llm(
     system: Optional[str] = None,
     model: str = FLASH,
     temperature: float = 0.0,
-    max_tokens: int = 512,
+    max_tokens: int = 1024,
     retries: int = 3,
     expect_json: bool = False,
 ) -> str:
