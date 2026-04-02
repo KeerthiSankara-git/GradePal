@@ -9,7 +9,7 @@ client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 # Model options
 FLASH = "gemini-2.5-flash"
-PRO   = "gemini-2.5-pro"  # update when pro is available on free tier
+# PRO   = "gemini-2.5-pro"  # update when pro is available on free tier
 
 def call_llm(
     prompt: str,
@@ -82,6 +82,7 @@ def batch_call(prompts: list[dict], delay: float = 1.5) -> list[str]:
     Set delay=4.0 on free tier to avoid rate limits.
     """
     results = []
+    delay = 0.5
     for i, kwargs in enumerate(prompts):
         print(f"  [batch] {i+1}/{len(prompts)}", end="\r")
         result = call_llm(**kwargs)
