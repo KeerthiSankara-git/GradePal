@@ -83,4 +83,4 @@ def reflect(
         gold_feedback_samples=_format_feedback_samples(gold_feedback_samples or []),
     )
 
-    return call_llm(prompt, system=SYSTEM, temperature=0.3, max_tokens=400)
+    return call_llm(prompt, system=SYSTEM, temperature=0.3, max_tokens=1024)
