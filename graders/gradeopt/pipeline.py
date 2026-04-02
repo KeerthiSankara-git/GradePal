@@ -75,15 +75,14 @@ def grade_all(df: pd.DataFrame, grading_notes: dict) -> tuple[list[int], list[st
 
 
 def collect_errors(df: pd.DataFrame, preds: list[int]) -> dict:
-    """
-    Returns { question_id_str: [ {student_answer, true_label, predicted_label}, ... ] }
-    Only includes questions that had at least one wrong prediction.
-    """
     errors_by_q: dict[str, list] = {}
     for (_, row), pred in zip(df.iterrows(), preds):
         true = int(row["output_label"])
         if pred != true:
             qid = str(row["Question_id"])
+            # skip nan question ids
+            if qid == "nan" or not qid.strip():
+                continue
             errors_by_q.setdefault(qid, [])
             errors_by_q[qid].append({
                 "student_answer": row["Student Answer"],
@@ -173,6 +172,9 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
 
         updated = 0
         for qid, errors in errors_by_q.items():
+            #skip nan question ids
+            if qid == "nan" or not qid.strip():
+                continue
             row0 = train_df[train_df["Question_id"].astype(str) == qid].iloc[0]
             gold_fb = get_gold_feedback(train_df, qid)
 

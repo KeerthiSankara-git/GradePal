@@ -64,4 +64,4 @@ def refine(
         previous_notes=previous_notes if previous_notes else "None yet.",
     )
 
-    return call_llm(prompt, system=SYSTEM, temperature=0.3, max_tokens=300)
+    return call_llm(prompt, system=SYSTEM, temperature=0.3, max_tokens=1024)
