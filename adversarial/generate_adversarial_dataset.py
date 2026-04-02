@@ -19,23 +19,6 @@ def load_splits(base_path="./data"):
     return splits
 
 
-# def call_gemini(prompt, client, model="gemini-2.5-flash"):
-#     try:
-#         response = client.models.generate_content(
-#             model=model,
-#             contents=prompt
-#         )
-#         return response.text.strip()
-    
-#     except Exception as e:
-#         print(f"Flash failed, switching to Pro: {e}")
-        
-#         response = client.models.generate_content(
-#             model="gemini-2.5-pro",
-#             contents=prompt
-#         )
-#         return response.text.strip()
-
 
 def extract_keywords_llm(question, correct_answer):
     prompt = f"""
@@ -171,27 +154,6 @@ def generate_adv_dataset(df, max_questions=100):
         keywords = extract_keywords_llm(question, correct)
         
         # Step 2: Generate attacks
-        # attacks = [
-        #     ("keyword", gen_keyword_stuffing(question, keywords), 0),
-        #     ("fluent_wrong", gen_fluent_wrong(question, correct), 0),
-        #     ("off_topic", gen_off_topic(question), 0),
-        #     ("flattery", gen_flattery(question), 0),
-        # ]
-        
-        # for attack_type, adv_answer, label in attacks:
-        #     # if is_valid_adversarial(adv_answer):
-        #     for _ in range(2):
-        #         adv_rows.append({
-        #             "Question": question,
-        #             "Correct Answer": correct,
-        #             "Adversarial Answer": adv_answer,
-        #             "attack_type": attack_type,
-        #             "output_label": label
-        #         })
-        #         print(f"\nAdversarial Type: {attack_type}, Answer: {adv_answer}")
-        #         time.sleep(3)
-        # print(f"\nQuestion {idx} processed")
-
         attack_generators = {
             "keyword": lambda: gen_keyword_stuffing(question, keywords),
             "fluent_wrong": lambda: gen_fluent_wrong(question, correct),
