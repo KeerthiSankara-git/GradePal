@@ -9,8 +9,9 @@ Output: one of {"incorrect", "partially correct", "correct"}
 
 Usage
 -----
-    python graders/baseline.py                  # grade val split, print metrics
-    python graders/baseline.py --split train    # grade train split instead
+    python -m graders.baseline                         # all splits (default)
+    python -m graders.baseline --split val             # val split only
+    python -m graders.baseline --split unseen_answers  # unseen answers split
 """
 
 import argparse
@@ -26,6 +27,8 @@ import pandas as pd
 from config import (
     TRAIN_PATH,
     VAL_PATH,
+    UNSEEN_ANS_PATH,
+    UNSEEN_Q_PATH,
     LABEL_MAP,
     LABEL_MAP_INV,
     BATCH_DELAY,
@@ -57,7 +60,9 @@ Be strict:
 Respond with ONLY one of these three labels (no punctuation, no explanation):
 incorrect
 partially correct
-correct\
+correct
+
+IMPORTANT: Output ONLY the label word(s). No explanation. No punctuation. No other text.\
 """
 
 USER_TEMPLATE = """\
@@ -119,8 +124,8 @@ def grade_single(question: str, student_answer: str) -> int:
     raw = call_llm(
         prompt=prompt,
         system=SYSTEM_PROMPT,
-        temperature=0.0,   # deterministic grading
-        max_tokens=1024,     # label is very short
+        temperature=0.0,
+        max_tokens=32,
     )
     return parse_label(raw)
 
@@ -140,7 +145,7 @@ def grade_dataframe(df: pd.DataFrame) -> list[int]:
             "prompt": build_prompt(row["Question"], row["Student Answer"]),
             "system": SYSTEM_PROMPT,
             "temperature": 0.0,
-            "max_tokens": 1024,
+            "max_tokens": 32,
         }
         for _, row in df.iterrows()
     ]
@@ -159,25 +164,43 @@ def run_evaluation(split: str = "val") -> dict:
 
     Parameters
     ----------
-    split : str — "train" or "val"
+    split : str — "train" | "val" | "unseen_answers" | "unseen_question"
 
     Returns
     -------
     dict — metrics returned by evaluate()
     """
-    path = VAL_PATH if split == "val" else TRAIN_PATH
+    paths = {
+        "train":            TRAIN_PATH,
+        "val":              VAL_PATH,
+        "unseen_answers":   UNSEEN_ANS_PATH,
+        "unseen_question":  UNSEEN_Q_PATH,
+    }
+    path = paths[split]
     df = pd.read_csv(path)
+
+    # Drop rows with missing question or answer
+    before = len(df)
+    df = df.dropna(subset=["Question", "Student Answer"])
+    if before - len(df) > 0:
+        print(f"  Dropped {before - len(df)} rows with missing values")
 
     print(f"\n{'='*55}")
     print(f"  Baseline Grader — {split.upper()} split  ({len(df)} examples)")
     print(f"{'='*55}\n")
 
-    # Grade every row
     y_pred = grade_dataframe(df)
-    y_true = df["output_label"].tolist()   # integer labels from CSV
+    y_true = df["output_label"].tolist()
 
-    # Compute and print all metrics
     metrics = evaluate(y_true, y_pred, split_name=f"Baseline ({split})")
+
+    # Save predictions to results/
+    Path("results").mkdir(exist_ok=True)
+    df_out = df.copy()
+    df_out["predicted_label"] = y_pred
+    df_out.to_csv(f"results/baseline_{split}.csv", index=False)
+    print(f"  Saved → results/baseline_{split}.csv")
+
     return metrics
 
 
@@ -186,12 +209,38 @@ def run_evaluation(split: str = "val") -> dict:
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    import json
+
     parser = argparse.ArgumentParser(description="Run the Baseline ASAG grader.")
     parser.add_argument(
         "--split",
-        choices=["train", "val"],
-        default="val",
-        help="Which data split to evaluate (default: val)",
+        choices=["train", "val", "unseen_answers", "unseen_question", "all"],
+        default="all",
+        help="Which data split to evaluate (default: all)",
     )
     args = parser.parse_args()
-    run_evaluation(split=args.split)
+
+    if args.split == "all":
+        all_metrics = []
+        for split in ["val", "unseen_answers", "unseen_question"]:
+            metrics = run_evaluation(split=split)
+            metrics["split"] = split
+            all_metrics.append(metrics)
+
+        Path("results").mkdir(exist_ok=True)
+        with open("results/baseline_metrics.json", "w") as f:
+            json.dump(all_metrics, f, indent=2)
+
+        print("\n" + "=" * 55)
+        print("BASELINE RESULTS SUMMARY")
+        print("=" * 55)
+        print(f"{'Split':<20} {'Accuracy':<12} {'QWK':<10} {'Weighted F1'}")
+        for m in all_metrics:
+            print(
+                f"{m['split']:<20} "
+                f"{m.get('accuracy', 0):<12.4f} "
+                f"{m.get('quadratic_wk', 0):<10.4f} "
+                f"{m.get('weighted_f1', 0):.4f}"
+            )
+    else:
+        run_evaluation(split=args.split)
