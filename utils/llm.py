@@ -88,6 +88,8 @@ def call_llm(
 
     last_error: Optional[Exception] = None
 
+    last_error: Optional[Exception] = None
+
     for attempt in range(retries):
         try:
             response = client.models.generate_content(
