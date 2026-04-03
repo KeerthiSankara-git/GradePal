@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import pandas as pd
 
 from config import (
+    GEMINI_MODEL,
     TRAIN_PATH,
     VAL_PATH,
     UNSEEN_ANS_PATH,
@@ -126,6 +127,8 @@ def grade_single(question: str, student_answer: str) -> int:
         system=SYSTEM_PROMPT,
         temperature=0.0,
         max_tokens=32,
+        model=GEMINI_MODEL,
+        disable_thinking=True  # Disable thinking for faster responses
     )
     return parse_label(raw)
 
@@ -146,6 +149,8 @@ def grade_dataframe(df: pd.DataFrame) -> list[int]:
             "system": SYSTEM_PROMPT,
             "temperature": 0.0,
             "max_tokens": 32,
+            "model": GEMINI_MODEL,
+            "disable_thinking": True  # Disable thinking for faster responses
         }
         for _, row in df.iterrows()
     ]
