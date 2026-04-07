@@ -4,7 +4,8 @@ load_dotenv()
 
 # API Keys and model names
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL   = "gemini-2.5-flash"
+#GEMINI_MODEL   = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 #Paths and constants
 DATA_DIR    = "data/"
@@ -24,4 +25,4 @@ LABEL_MAP = {0: "incorrect", 1: "partially correct", 2: "correct"}
 LABEL_MAP_INV = {"incorrect": 0, "partially correct": 1, "correct": 2}
 
 #  Rate limiting 
-BATCH_DELAY = 1.0  # seconds between calls on free tier
+BATCH_DELAY = 0.1  # seconds between calls on free tier

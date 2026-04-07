@@ -16,6 +16,7 @@ import re
 
 from utils.llm import call_llm
 import json
+from config import GEMINI_MODEL
 
 LABEL_MAP_INV = {
     "incorrect": 0,
@@ -157,9 +158,11 @@ def grade_with_feedback(
         prompt,
         system=SYSTEM,
         temperature=0.0,
-        max_tokens=1024,     # more tokens needed for JSON + feedback
+        max_tokens=2048,     # more tokens needed for JSON + feedback
         retries=3,
         expect_json=True,   # strip markdown fences automatically
+        disable_thinking=False,
+        model=GEMINI_MODEL
     )
 
     return _parse_response(raw)

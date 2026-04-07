@@ -29,7 +29,7 @@ Using the critique above, write an updated set of grading notes for this questio
 These notes will be shown to the grader alongside the question and correct answer.
 
 Your notes must:
-- Be 3-6 bullet points, one sentence each
+- Be 3-5 bullet points, one sentence each
 - Clearly state what counts as correct, partially correct, and incorrect
 - Call out specific concepts, keywords, or phrasing to watch for
 - Fix the errors described in the critique
@@ -64,4 +64,4 @@ def refine(
         previous_notes=previous_notes if previous_notes else "None yet.",
     )
 
-    return call_llm(prompt, system=SYSTEM, temperature=0.3, max_tokens=1024)
+    return call_llm(prompt, system=SYSTEM, temperature=0.3, max_tokens=2048)
