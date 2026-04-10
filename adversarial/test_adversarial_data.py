@@ -8,17 +8,20 @@ import json
 import time
 import pandas as pd
 from pathlib import Path
+from collections import Counter
 
 from config import BATCH_DELAY
 from utils.metrics import over_grading_rate
-# from graders.baseline import grade_single as baseline_grade
+from graders.baseline import grade_single as baseline_grade
 from graders.static_rubric import grade as static_grade
 from graders.gradeopt.grader_agent import grade_with_feedback
 
 
-def compute_per_type_metrics(df, preds):
-    results = {}
 
+def compute_per_type_metrics(df, preds):
+    from collections import Counter
+
+    results = {}
     df_out = df.copy()
     df_out["predicted_label"] = preds
 
@@ -26,13 +29,15 @@ def compute_per_type_metrics(df, preds):
         subset = df_out[df_out["attack_type"] == attack]
         type_preds = subset["predicted_label"].tolist()
 
-        ogr = over_grading_rate([0]*len(type_preds), type_preds)
-        avg_score = sum(type_preds) / len(type_preds)
+        counts = Counter(type_preds)
+        total = len(type_preds)
 
         results[attack] = {
-            "over_grading_rate": round(ogr, 4),
-            "avg_score": round(avg_score, 4),
-            "count": len(type_preds)
+            "over_grading_rate": over_grading_rate([0]*total, type_preds),
+            "pct_0": counts.get(0, 0) / total,
+            "pct_1": counts.get(1, 0) / total,
+            "pct_2": counts.get(2, 0) / total,
+            "count": total
         }
 
     return results
@@ -94,26 +99,22 @@ def evaluate_system(df: pd.DataFrame, system_name: str,
     ogr = over_grading_rate(y_true, preds, passing_threshold=1)
     avg_score = sum(preds) / len(preds)
 
+    label_counts = Counter(preds)
+    total = len(preds)
+
+    pct_0 = label_counts.get(0, 0) / total
+    pct_1 = label_counts.get(1, 0) / total
+    pct_2 = label_counts.get(2, 0) / total
+
     print(f"\n── Adversarial: {system_name} ──")
     print(f"  Over-grading rate: {ogr:.4f} ({ogr*100:.1f}% fooled)")
     print(f"  Average predicted score: {avg_score:.4f}")
 
-    # per-type breakdown
-    # if "adversarial_type" in df.columns:
-    #     df_out = df.copy()
-    #     df_out["predicted_label"] = preds
-    #     print(f"\n  Per-type over-grading rate:")
-    #     for adv_type in df["adversarial_type"].unique():
-    #         type_df = df_out[df_out["adversarial_type"] == adv_type]
-    #         type_preds = type_df["predicted_label"].tolist()
-    #         type_ogr = over_grading_rate([0]*len(type_preds), type_preds)
-    #         print(f"    {adv_type:<25}: {type_ogr*100:.1f}%")
-    # return {
-    #     "system": system_name,
-    #     "over_grading_rate": round(ogr, 4),
-    #     "avg_predicted_score": round(avg_score, 4),
-    #     "n_examples": len(preds)
-    # }
+    print(f"\n  Label distribution:")
+    print(f"    0 (correct reject): {pct_0*100:.1f}%")
+    print(f"    1 (partial credit): {pct_1*100:.1f}%")
+    print(f"    2 (fully fooled):  {pct_2*100:.1f}%")
+
 
     per_type = {}
     if "attack_type" in df.columns:
@@ -122,6 +123,7 @@ def evaluate_system(df: pd.DataFrame, system_name: str,
         print(f"\n  Per-type over-grading rate:")
         for attack, stats in per_type.items():
             print(f"    {attack:<25}: {stats['over_grading_rate']*100:.1f}%")
+
     return {
     "system": system_name,
     "over_grading_rate": round(ogr, 4),
@@ -173,20 +175,20 @@ def main():
     all_metrics = []
 
     # ── Baseline ──────────────────────────────────────────────────────────────
-    # print(f"\n{'='*60}")
-    # print("Baseline Grader...")
-    # print(f"{'='*60}")
+    print(f"\n{'='*60}")
+    print("Baseline Grader...")
+    print(f"{'='*60}")
 
-    # baseline_metrics = evaluate_system(
-    #     df=df,
-    #     system_name="Baseline",
-    #     grade_fn=lambda row: baseline_grade(
-    #         question=str(row["Question"]),
-    #         student_answer=str(row["Student Answer"])
-    #     ),
-    #     save_path="results/adversarial_baseline.csv"
-    # )
-    # all_metrics.append(baseline_metrics)
+    baseline_metrics = evaluate_system(
+        df=df,
+        system_name="Baseline",
+        grade_fn=lambda row: baseline_grade(
+            question=str(row["Question"]),
+            student_answer=str(row["Student Answer"])
+        ),
+        save_path="results/adversarial_baseline.csv"
+    )
+    all_metrics.append(baseline_metrics)
 
     # ── Static Rubric ─────────────────────────────────────────────────────────
     print(f"\n{'='*60}")
@@ -235,19 +237,6 @@ def main():
     comparison = save_per_type_comparison(all_metrics)
     print_comparison_table(comparison)
 
-    # print("\n" + "=" * 60)
-    # print("ADVERSARIAL EVALUATION SUMMARY")
-    # print("=" * 60)
-    # print(f"{'System':<20} {'Over-grading Rate':<22} {'Avg Score'}")
-    # for m in all_metrics:
-    #     print(
-    #         f"{m['system']:<20} "
-    #         f"{m['over_grading_rate']:<22.4f} "
-    #         f"{m['avg_predicted_score']:.4f}"
-    #     )
-    # print("=" * 60)
-    # print("Lower over-grading rate = more robust")
-    # print(f"Saved → results/adversarial_metrics.json")
 
 
 if __name__ == "__main__":

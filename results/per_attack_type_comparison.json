@@ -1,17 +1,21 @@
 {
   "keyword": {
+    "Baseline": 0.975,
     "Static Rubric": 0.95,
     "GradeOpt": 0.925
   },
   "fluent_wrong": {
+    "Baseline": 0.325,
     "Static Rubric": 0.25,
     "GradeOpt": 0.275
   },
   "off_topic": {
+    "Baseline": 0.0,
     "Static Rubric": 0.0,
     "GradeOpt": 0.0
   },
   "flattery": {
+    "Baseline": 0.0,
     "Static Rubric": 0.0,
     "GradeOpt": 0.0
   }
