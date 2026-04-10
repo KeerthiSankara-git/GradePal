@@ -1,0 +1,16 @@
+[
+  {
+    "split": "unseen_answers",
+    "accuracy": 0.6513,
+    "quadratic_wk": 0.653,
+    "weighted_f1": 0.6501,
+    "macro_f1": 0.6609
+  },
+  {
+    "split": "unseen_question",
+    "accuracy": 0.515,
+    "quadratic_wk": 0.4732,
+    "weighted_f1": 0.5206,
+    "macro_f1": 0.5132
+  }
+]

@@ -68,12 +68,13 @@ def call_llm(
     max_tokens: int = 1024,
     retries: int = 3,
     expect_json: bool = False,
-    disable_thinking: bool = False,
+    disable_thinking: bool = False  # new parameter
 ) -> str:
     """
     Core LLM call. Returns response text.
     All graders/agents should use this — never call genai directly.
     """
+    
     config_kwargs = {
         "temperature": temperature,
         "max_output_tokens": max_tokens,

@@ -1,0 +1,37 @@
+[
+  {
+    "split": "gradeopt_val_iter1",
+    "precision": 0.8855,
+    "recall": 0.8909,
+    "f1": 0.8881,
+    "n_examples": 406
+  },
+  {
+    "split": "gradeopt_val_iter2",
+    "precision": 0.8866,
+    "recall": 0.8915,
+    "f1": 0.8889,
+    "n_examples": 402
+  },
+  {
+    "split": "gradeopt_val_iter3",
+    "precision": 0.8857,
+    "recall": 0.8918,
+    "f1": 0.8886,
+    "n_examples": 400
+  },
+  {
+    "split": "gradeopt_unseen_answers",
+    "precision": 0.8855,
+    "recall": 0.8919,
+    "f1": 0.8886,
+    "n_examples": 967
+  },
+  {
+    "split": "gradeopt_unseen_question",
+    "precision": 0.8886,
+    "recall": 0.8937,
+    "f1": 0.8911,
+    "n_examples": 764
+  }
+]

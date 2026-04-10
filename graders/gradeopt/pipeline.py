@@ -41,21 +41,29 @@ METRICS_PATH = Path("results/gradeopt_metrics.json")
 # Helpers
 # ---------------------------------------------------------------------------
 
-def grade_all(df: pd.DataFrame, grading_notes: dict) -> tuple[list[int], list[str]]:
-    """
-    Grade every row in df.
-    Returns (predictions, feedbacks) — both lists same length as df.
-    """
+def grade_all(df: pd.DataFrame, grading_notes: dict, 
+              save_path: str = None) -> tuple[list[int], list[str]]:
     from graders.gradeopt.grader_agent import grade_with_feedback
     
     preds = []
     feedbacks = []
+    start_index = 0
     total = len(df)
-    
-    for i, (_, row) in enumerate(df.iterrows()):
 
-        if i % 10 == 0:
-            print(f"    progress: {i}/{total} rows", end="\r")
+    # resume logic — load existing progress if file exists
+    if save_path and Path(save_path).exists():
+        existing = pd.read_csv(save_path)
+        if "predicted_label" in existing.columns:
+            preds = existing["predicted_label"].tolist()
+            feedbacks = existing.get("generated_feedback", 
+                       pd.Series([""] * len(preds))).tolist()
+            start_index = len(preds)
+            print(f"  Resuming from row {start_index}/{total}")
+
+    for i, (_, row) in enumerate(df.iterrows()):
+        if i < start_index:
+            continue
+
         qid = str(row["Question_id"])
         notes = grading_notes.get(qid, "")
 
@@ -68,9 +76,20 @@ def grade_all(df: pd.DataFrame, grading_notes: dict) -> tuple[list[int], list[st
         preds.append(result["label"])
         feedbacks.append(result["feedback"])
 
-        if i < len(df) - 1:
+        # save progress after every row
+        if save_path:
+            df_so_far = df.iloc[:len(preds)].copy()
+            df_so_far["predicted_label"] = preds
+            df_so_far["generated_feedback"] = feedbacks
+            df_so_far.to_csv(save_path, index=False)
+
+        if i % 10 == 0:
+            print(f"    progress: {i}/{total} rows", end="\r")
+
+        if i < total - 1:
             time.sleep(BATCH_DELAY)
 
+    print(f"    progress: {total}/{total} rows ✓")
     return preds, feedbacks
 
 
@@ -107,6 +126,18 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
     print(f"GradeOpt Pipeline  |  {n_iters} iteration(s)")
     print("=" * 60)
 
+    # ── Resume from saved state if exists ─────────────────────────────────────
+    state_path = Path("results/gradeopt_state.json")
+    start_iteration = 0
+    grading_notes: dict[str, str] = {}
+
+    if state_path.exists():
+        with open(state_path) as f:
+            state = json.load(f)
+        start_iteration = state.get("completed_iterations", 0)
+        grading_notes = state.get("grading_notes", {})
+        print(f"  Resuming from iteration {start_iteration + 1}")
+    
     # ── Load TRAIN for optimization ───────────────────────────────────────────
     print(f"\nLoading TRAIN data from {TRAIN_PATH} ...")
     train_df = pd.read_csv(TRAIN_PATH)
@@ -123,26 +154,31 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
     y_true_val = val_df["output_label"].tolist()
     print(f"  {len(val_df)} rows | {val_df['Question_id'].nunique()} unique questions")
 
-    # grading_notes: per-question string of refined criteria
-    # starts empty — iteration 0 is baseline (correct_answer only)
-    grading_notes: dict[str, str] = {}
-
     all_metrics = []
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     Path("results").mkdir(parents=True, exist_ok=True)
 
-    for iteration in range(n_iters):
+    # load existing metrics if resuming
+    if METRICS_PATH.exists():
+        with open(METRICS_PATH) as f:
+            all_metrics = json.load(f)
+
+    for iteration in range(start_iteration, n_iters):
         print(f"\n{'─'*60}")
         print(f"ITERATION {iteration + 1} / {n_iters}")
         print(f"{'─'*60}")
 
         # ── Step 1: Grade TRAIN set ───────────────────────────────────────────
         print(f"\n[1/3] Grading {len(train_df)} training examples ...")
-        train_preds, train_feedbacks = grade_all(train_df, grading_notes)
+        train_save_path = f"results/gradeopt_train_iter{iteration+1}_progress.csv"
+        train_preds, train_feedbacks = grade_all(train_df, grading_notes,
+                                                  save_path=train_save_path)
 
         # ── Step 2: Evaluate on VAL set ───────────────────────────────────────
         print(f"\n[2/3] Evaluating on val set ({len(val_df)} rows) ...")
-        val_preds, val_feedbacks = grade_all(val_df, grading_notes)
+        val_save_path = f"results/gradeopt_val_iter{iteration+1}.csv"
+        val_preds, val_feedbacks = grade_all(val_df, grading_notes,
+                                              save_path=val_save_path)
 
         metrics = evaluate(y_true_val, val_preds, split_name=f"iter_{iteration+1}_val")
         metrics["iteration"] = iteration + 1
@@ -156,29 +192,36 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
         val_df_out = val_df.copy()
         val_df_out["predicted_label"] = val_preds
         val_df_out["generated_feedback"] = val_feedbacks
-        val_out_path = f"results/gradeopt_val_iter{iteration+1}.csv"
-        val_df_out.to_csv(val_out_path, index=False)
-        print(f"  Saved predictions + feedback → {val_out_path}")
+        val_df_out.to_csv(val_save_path, index=False)
+        print(f"  Saved predictions + feedback → {val_save_path}")
 
         # skip reflect/refine on final iteration
         if iteration == n_iters - 1:
             print("\nFinal iteration — skipping reflect/refine step.")
+            # save final state
+            with open(state_path, "w") as f:
+                json.dump({
+                    "completed_iterations": iteration + 1,
+                    "grading_notes": grading_notes
+                }, f, indent=2)
             break
 
         # ── Step 3: Reflect + Refine on TRAIN errors ──────────────────────────
         print("\n[3/3] Reflecting on training errors and refining grading notes ...")
-        errors_by_q = collect_errors(train_df, train_preds)  # use train_preds not preds
+        errors_by_q = collect_errors(train_df, train_preds)
         print(f"  {len(errors_by_q)} question(s) had grading errors.")
 
         updated = 0
         for qid, errors in errors_by_q.items():
-            #skip nan question ids
             if qid == "nan" or not qid.strip():
                 continue
-            row0 = train_df[train_df["Question_id"].astype(str) == qid].iloc[0]
+            
+            matches = train_df[train_df["Question_id"].astype(str) == qid]
+            if len(matches) == 0:
+                continue
+            row0 = matches.iloc[0]
             gold_fb = get_gold_feedback(train_df, qid)
 
-            # Reflect
             critique = reflector_agent.reflect(
                 question=row0["Question"],
                 correct_answer=row0["Correct Answer"],
@@ -186,7 +229,6 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
                 gold_feedback_samples=gold_fb,
             )
 
-            # Refine
             new_notes = refiner_agent.refine(
                 question=row0["Question"],
                 correct_answer=row0["Correct Answer"],
@@ -199,11 +241,18 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
 
         print(f"  {updated} question(s) had their grading notes updated.")
 
-        # save grading notes after each iteration
+        # ── Save state after each completed iteration ─────────────────────────
         NOTES_PATH.parent.mkdir(parents=True, exist_ok=True)
         with open(NOTES_PATH, "w") as f:
             json.dump(grading_notes, f, indent=2)
         print(f"  Grading notes saved → {NOTES_PATH}")
+
+        with open(state_path, "w") as f:
+            json.dump({
+                "completed_iterations": iteration + 1,
+                "grading_notes": grading_notes
+            }, f, indent=2)
+        print(f"  State saved → {state_path}")
 
     # ── Final saves ───────────────────────────────────────────────────────────
     with open(NOTES_PATH, "w") as f:
