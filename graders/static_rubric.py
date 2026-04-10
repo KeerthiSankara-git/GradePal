@@ -51,6 +51,30 @@ def parse_label(text: str) -> int:
         return 2
     return 0
 
+
+def grade(question: str, correct_answer: str, student_answer: str) -> int:
+    formatted_prompt = PROMPT_TEMPLATE.format(
+        question=question,
+        rubric=correct_answer,
+        student_answer=student_answer
+    )
+
+    try:
+        raw_response = call_llm(
+            prompt=formatted_prompt,
+            system=SYSTEM_PROMPT,
+            temperature=0.0,
+            max_tokens=32,
+            model=GEMINI_MODEL,
+            disable_thinking=True
+        )
+        return parse_label(raw_response)
+    except Exception as e:
+        if "429" in str(e):
+            raise e
+        return 0
+
+
 def main():
     # Define datasets using paths from config
     datasets = [
@@ -96,27 +120,32 @@ def main():
         # Grading Loop
         for index in range(start_index, len(df)):
             row = df.iloc[index]
-            formatted_prompt = PROMPT_TEMPLATE.format(
-                question=row.get('Question', ''),
-                rubric=row.get('Correct Answer', ''),  
-                student_answer=row.get('Student Answer', '')
-            )
+            # formatted_prompt = PROMPT_TEMPLATE.format(
+            #     question=row.get('Question', ''),
+            #     rubric=row.get('Correct Answer', ''),  
+            #     student_answer=row.get('Student Answer', '')
+            # )
             
-            try:
-                raw_response = call_llm(
-                    prompt=formatted_prompt, 
-                    system=SYSTEM_PROMPT, 
-                    temperature=0.0, 
-                    max_tokens=32, 
-                    model=GEMINI_MODEL,
-                    disable_thinking=True 
-                )
-                pred_int = parse_label(raw_response)
-            except Exception as e:
-                if "429" in str(e):
-                    print("\n[!] Rate limit hit. Exiting.")
-                    return 
-                pred_int = 0 
+            # try:
+            #     raw_response = call_llm(
+            #         prompt=formatted_prompt, 
+            #         system=SYSTEM_PROMPT, 
+            #         temperature=0.0, 
+            #         max_tokens=32, 
+            #         model=GEMINI_MODEL,
+            #         disable_thinking=True 
+            #     )
+            #     pred_int = parse_label(raw_response)
+            # except Exception as e:
+            #     if "429" in str(e):
+            #         print("\n[!] Rate limit hit. Exiting.")
+            #         return 
+            #     pred_int = 0
+            # 
+            question=row.get('Question', ''),
+            correct_answer=row.get('Correct Answer', ''),  
+            student_answer=row.get('Student Answer', '') 
+            pred_int = grade(question, correct_answer, student_answer)
             
             # Save progress
             result_entry = row.to_dict()
