@@ -143,7 +143,7 @@ def main():
             #     pred_int = 0
             # 
             question=row.get('Question', ''),
-            correct_answer=row.get('Correct Answer', ''),  
+            correct_answer=row.get('Correct Answer', '') 
             student_answer=row.get('Student Answer', '') 
             pred_int = grade(question, correct_answer, student_answer)
             

@@ -26,3 +26,6 @@ LABEL_MAP_INV = {"incorrect": 0, "partially correct": 1, "correct": 2}
 
 #  Rate limiting 
 BATCH_DELAY = 0.1  # seconds between calls on free tier
+
+ADV_TRAIN_PATH = "data/adv_train/original_plus_adv_train.csv"
+ADV_VAL_PATH = "data/adv_train/original_plus_adv_val.csv"

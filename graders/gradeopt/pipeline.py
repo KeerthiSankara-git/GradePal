@@ -32,9 +32,21 @@ from config import VAL_PATH, LABEL_MAP, BATCH_DELAY, TRAIN_PATH
 from utils import metrics
 from utils.metrics import evaluate
 from graders.gradeopt import grader_agent, reflector_agent, refiner_agent
+from config import ADV_TRAIN_PATH, ADV_VAL_PATH
 
-NOTES_PATH   = Path("results/gradeopt_notes.json")
-METRICS_PATH = Path("results/gradeopt_metrics.json")
+
+# NOTES_PATH   = Path("results/gradeopt_notes.json")
+# METRICS_PATH = Path("results/gradeopt_metrics.json")
+
+def get_paths(run_name):
+    base = Path(f"results/{run_name}")
+    base.mkdir(parents=True, exist_ok=True)
+
+    return {
+        "notes": base / "gradeopt_notes.json",
+        "metrics": base / "gradeopt_metrics.json",
+        "state": base / "gradeopt_state.json"
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -127,7 +139,14 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
     print("=" * 60)
 
     # ── Resume from saved state if exists ─────────────────────────────────────
-    state_path = Path("results/gradeopt_state.json")
+    # state_path = Path("results/gradeopt_state.json")
+    
+    paths = get_paths(args.run_name)
+
+    NOTES_PATH = paths["notes"]
+    METRICS_PATH = paths["metrics"]
+    state_path = paths["state"]
+
     start_iteration = 0
     grading_notes: dict[str, str] = {}
 
@@ -142,6 +161,15 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
     print(f"\nLoading TRAIN data from {TRAIN_PATH} ...")
     train_df = pd.read_csv(TRAIN_PATH)
 
+    if args.use_adv_train:
+        print(f"Loading adversarial training data from {ADV_TRAIN_PATH}")
+        
+        adv_train_df = pd.read_csv(ADV_TRAIN_PATH)
+        train_df = pd.concat([train_df, adv_train_df], ignore_index=True)
+        train_df = train_df.sample(frac=1, random_state=42).reset_index(drop=True)
+
+    print(f"Training size: {len(train_df)}")
+
     if sample is not None:
         train_df = train_df.head(sample)
         print(f"  [DEV MODE] Using {sample} rows only")
@@ -151,8 +179,20 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
     # ── Load VAL for evaluation ───────────────────────────────────────────────
     print(f"\nLoading VAL data from {VAL_PATH} ...")
     val_df = pd.read_csv(VAL_PATH)
+    if args.use_adv_train:
+        print(f"Loading adversarial validation data from {ADV_VAL_PATH}")
+        adv_val_df = pd.read_csv(ADV_VAL_PATH)
+        val_df = pd.concat([val_df, adv_val_df], ignore_index=True)
+        val_df = val_df.sample(frac=1, random_state=42).reset_index(drop=True)
+    
+    if sample is not None:
+        val_df = val_df.head(sample)
+        print(f"  [DEV MODE] Using {sample} rows only")
+
     y_true_val = val_df["output_label"].tolist()
     print(f"  {len(val_df)} rows | {val_df['Question_id'].nunique()} unique questions")
+
+    
 
     all_metrics = []
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -170,13 +210,16 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
 
         # ── Step 1: Grade TRAIN set ───────────────────────────────────────────
         print(f"\n[1/3] Grading {len(train_df)} training examples ...")
-        train_save_path = f"results/gradeopt_train_iter{iteration+1}_progress.csv"
+        # train_save_path = f"results/gradeopt_train_iter{iteration+1}_progress.csv"
+        train_save_path = f"results/{args.run_name}/train_iter{iteration+1}.csv"
+        
         train_preds, train_feedbacks = grade_all(train_df, grading_notes,
                                                   save_path=train_save_path)
 
         # ── Step 2: Evaluate on VAL set ───────────────────────────────────────
         print(f"\n[2/3] Evaluating on val set ({len(val_df)} rows) ...")
-        val_save_path = f"results/gradeopt_val_iter{iteration+1}.csv"
+        # val_save_path = f"results/gradeopt_val_iter{iteration+1}.csv"
+        val_save_path   = f"results/{args.run_name}/val_iter{iteration+1}.csv"
         val_preds, val_feedbacks = grade_all(val_df, grading_notes,
                                               save_path=val_save_path)
 
@@ -291,6 +334,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--sample", type=int, default=None,
         help="Only use first N rows of train for optimization (for testing)"
+    )
+    parser.add_argument(
+    "--use_adv_train",
+    action="store_true",
+    help="Include adversarial data in training"
+    )
+    parser.add_argument(
+        "--run_name",
+        type=str,
+        default="default",
+        help="Name for saving results (e.g., gradeopt, adv, etc.)"
     )
     args = parser.parse_args()
     run_pipeline(n_iters=args.iters, sample=args.sample)
