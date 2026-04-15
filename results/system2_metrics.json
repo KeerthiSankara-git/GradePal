@@ -1,0 +1,23 @@
+[
+    {
+        "split": "Static val",
+        "accuracy": 0.6388,
+        "quadratic_wk": 0.6091,
+        "weighted_f1": 0.6352,
+        "macro_f1": 0.6474
+    },
+    {
+        "split": "Static unseen_answers",
+        "accuracy": 0.6449,
+        "quadratic_wk": 0.6644,
+        "weighted_f1": 0.6439,
+        "macro_f1": 0.6564
+    },
+    {
+        "split": "Static unseen_questions",
+        "accuracy": 0.5529,
+        "quadratic_wk": 0.5483,
+        "weighted_f1": 0.5579,
+        "macro_f1": 0.5578
+    }
+]

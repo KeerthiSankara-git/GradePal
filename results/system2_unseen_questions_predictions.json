@@ -1590,7 +1590,7 @@
         "Correct Answer": "Wind Speed, Temperature of water and air, vapour pressure, Atmospheric pressure, heat storage by water body, water quality ",
         "output_label": 1,
         "feedback": "Feedback: Your answer addresses some important factors, but it misses key elements like wind speed, atmospheric pressure, and water quality, which can significantly influence evaporation rates. Try to include these factors in your response for a more comprehensive understanding.",
-        "static_rubric_prediction": 0
+        "static_rubric_prediction": 1
     },
     {
         "Question_id": 260815.0,
@@ -2535,7 +2535,7 @@
         "Correct Answer": "SWOT stands for Strengh Weakness Opportunity Threats",
         "output_label": 2,
         "feedback": "Impressive! You've accurately expanded the term SWOT, demonstrating a solid understanding of the fundamental components used in strategic planning and analysis. Keep up the good work!",
-        "static_rubric_prediction": 0
+        "static_rubric_prediction": 2
     },
     {
         "Question_id": 260785.0,
@@ -3489,7 +3489,7 @@
         "Correct Answer": "FALSE\nThe ISA is an abstraction           instructions are mapped to functionality, how the functionality is\nachieved is not known to the OS, but the ISA           instructions + registers are used by the OS\nfor its functionality.\nKey point - Implementation details/achievement of functionality is not known to the OS.\nOS understands the ISA, in fact an OS needs to be compiled differently for different ISAs.",
         "output_label": 1,
         "feedback": "You have correctly identified ISA as an abstraction, but you missed the main point: ISA is an abstraction because it hides the implementation details of how the instructions and registers achieve the functionality. The purpose of using trap values and error registers is to handle errors and exceptions, not to identify the ISA.",
-        "static_rubric_prediction": 1
+        "static_rubric_prediction": 0
     },
     {
         "Question_id": 24.0,
@@ -6000,7 +6000,7 @@
         "Correct Answer": "FALSE\nIf the lock is available a spinlock does not have to spin.",
         "output_label": 2,
         "feedback": "You are on the right track! The reasoning is also partially correct. The key idea is that a spinlock may or may not need to spin depending on the availability of the lock. To improve your answer, focus on explaining that spinning is not always necessary. You could state that if the lock is available on the first attempt, there is no need to spin multiple times.",
-        "static_rubric_prediction": 0
+        "static_rubric_prediction": 1
     },
     {
         "Question_id": 23.0,

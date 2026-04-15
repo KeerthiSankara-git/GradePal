@@ -2418,7 +2418,7 @@
         "Correct Answer": "The code will be more clear and easier for the reader to understand. Allows easy changing, debugging, and overriding of the functions. Enhances modularity of the code. This also separates the abstraction from the implementation.",
         "output_label": 1,
         "feedback": " \n1. The statement about modifying functions and variables is not clear and does not align with the question.\n2. The example provided for the same variable storing different values is incorrect.\n  ",
-        "static_rubric_prediction": 1
+        "static_rubric_prediction": 0
     },
     {
         "Question_id": 320739.0,

@@ -2499,7 +2499,7 @@
         "Correct Answer": "The code will be more clear and easier for the reader to understand. Allows easy changing, debugging, and overriding of the functions. Enhances modularity of the code. This also separates the abstraction from the implementation.",
         "output_label": 2,
         "feedback": "Great job! You've captured the essence of separating declaration from definition. Keep in mind that readability and maintainability are essential aspects of good coding practices.",
-        "static_rubric_prediction": 1
+        "static_rubric_prediction": 2
     },
     {
         "Question_id": 131613.0,
