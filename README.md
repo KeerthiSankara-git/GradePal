@@ -72,6 +72,8 @@ GradePal/
 ├── adversarial/                   # Adversarial data generation and testing
 │   ├── generate_adversarial_dataset.py
 │   └── test_adversarial_data.py
+|   └── split_adv_data.py
+|   └── original_dataset_analysis.py
 ├── results/                       # Evaluation outputs (not committed)
 │   ├── gradeopt_metrics.json      # GradeOpt val metrics per iteration
 │   ├── gradeopt_notes.json        # Optimized per-question grading notes
