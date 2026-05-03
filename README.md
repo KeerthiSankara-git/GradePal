@@ -148,6 +148,13 @@ print('Setup complete!')
 
 ## Running the Code
 
+### Original dataset analysis
+```bash
+python -m adversarial.original_dataset_analysis
+```
+Results saved to `adversarial/results/original_dataset_analysis_results`
+
+
 ### System 1 — Baseline Grader
 ```bash
 # Run on all splits
@@ -206,6 +213,16 @@ python -m evaluation.bertscore_eval
 Results saved to `results/bertscore_metrics.json`
 
 ---
+
+### Adversarial Dataset Generation
+Both these commands are just run once and results are saved to the data folder
+```bash
+python -m adversarial.generate_adversarial_dataset
+# Creating data split
+python -m adversarial.split_adv_data
+```
+Results saved to `results/adversarial_dataset.csv`
+
 
 ### Adversarial Robustness Evaluation
 ```bash
