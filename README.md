@@ -23,14 +23,12 @@ GradePal is a multi-agent automatic short-answer grading (ASAG) system that:
 
 1. **Grades** student answers using an LLM with an iteratively optimized rubric (GradeOpt-style)
 2. **Generates feedback** explaining what the student got right and wrong
-3. **Evaluates robustness** against adversarial answers — keyword-stuffed or 
-   fluent-but-wrong responses that try to trick the grader
+3. **Evaluates robustness** against adversarial answers — keyword-stuffed or fluent-but-wrong responses that try to trick the grader
 
 We compare three grading systems:
 - **System 1 — Baseline (no rubric):** LLM sees only the question and student answer
 - **System 2 — Static Rubric:** LLM also sees the reference answer
-- **System 3 — GradeOpt:** Multi-agent loop (Grader → Reflector → Refiner) 
-  that iteratively improves per-question grading notes
+- **System 3 — GradeOpt:** Multi-agent loop (Grader → Reflector → Refiner) that iteratively improves per-question grading notes
 
 ---
 
@@ -45,12 +43,13 @@ We compare three grading systems:
 | API | Google AI Studio (paid tier, 10,000 RPD) |
 | Runtime | GradeOpt full pipeline (~9 hours on 3,662 training examples, 3 iterations) |
 
-> **Note:** All experiments were run on personal MacBook laptops using the 
-> Gemini API. No GPU required — all inference is API-based.
+> **Note:** All experiments were run on personal MacBook laptops using the Gemini API. No GPU required — all inference is API-based.
 
 ---
 
 ## Repository Structure
+
+```
 GradePal/
 ├── data/                          # EngSAF dataset CSVs (not committed — add locally)
 │   ├── train.csv
@@ -87,6 +86,8 @@ GradePal/
 ├── .env                           # API key — NEVER commit
 ├── requirements.txt
 └── README.md
+```
+
 ---
 
 ## Environment Setup
@@ -112,18 +113,23 @@ pip install -r requirements.txt
 
 ### Step 4 — Set up API key
 Create a `.env` file in the project root:
+```
 GEMINI_API_KEY=your_gemini_api_key_here
+```
+
 Get a free API key at [aistudio.google.com](https://aistudio.google.com).
 
 > **Never commit your `.env` file.**
 
 ### Step 5 — Add the dataset
 Download the EngSAF dataset and place CSV files in the `data/` folder:
+```
 data/train.csv
 data/val.csv
 data/unseen_answers.csv
 data/unseen_question.csv
 data/adversarial_dataset_with_feedback.csv
+```
 
 ### Step 6 — Verify setup
 ```bash
@@ -147,18 +153,22 @@ print('Setup complete!')
 # Run on all splits
 python -m graders.baseline --split all
 
-# Run on specific split
+# Run on a specific split
 python -m graders.baseline --split val
 python -m graders.baseline --split unseen_answers
 python -m graders.baseline --split unseen_question
 ```
 Results saved to `results/baseline_metrics.json`
 
+---
+
 ### System 2 — Static Rubric Grader
 ```bash
 python -m graders.static_rubric
 ```
 Results saved to `results/system2_val_predictions.json`
+
+---
 
 ### System 3 — GradeOpt Pipeline
 ```bash
@@ -168,14 +178,17 @@ python -m graders.gradeopt.pipeline --iters 3
 # Development mode — quick test on 50 examples
 python -m graders.gradeopt.pipeline --iters 1 --sample 50
 
-# Resume interrupted run automatically
+# Resume an interrupted run automatically
 python -m graders.gradeopt.pipeline --iters 3
-# checkpoint saved after every row — safe to interrupt and resume
+# Checkpoint is saved after every row — safe to interrupt and resume
 ```
+
 Results saved to:
 - `results/gradeopt_metrics.json` — QWK per iteration
 - `results/gradeopt_notes.json` — optimized per-question grading notes
 - `results/gradeopt_val_iter{N}.csv` — predictions + feedback per iteration
+
+---
 
 ### Unseen Split Evaluation
 ```bash
@@ -183,12 +196,16 @@ python -m evaluation.evaluate_unseen
 ```
 Results saved to `results/gradeopt_unseen_metrics.json`
 
+---
+
 ### BERTScore Feedback Evaluation
 ```bash
 pip install bert-score
 python -m evaluation.bertscore_eval
 ```
 Results saved to `results/bertscore_metrics.json`
+
+---
 
 ### Adversarial Robustness Evaluation
 ```bash
@@ -200,42 +217,61 @@ Results saved to `results/adversarial_metrics.json`
 
 ## How Results Are Generated
 
-All paper results are produced by running the scripts above in this order:
+All paper results are produced by running the scripts in this order:
 
-python -m graders.baseline --split all
-→ results/baseline_metrics.json
-python -m graders.static_rubric
-→ results/system2_*_predictions.json
-python -m graders.gradeopt.pipeline --iters 3
-→ results/gradeopt_metrics.json
-→ results/gradeopt_notes.json
-python -m evaluation.evaluate_unseen
-→ results/gradeopt_unseen_metrics.json
-python -m evaluation.bertscore_eval
-→ results/bertscore_metrics.json
-python -m adversarial.test_adversarial_data
-→ results/adversarial_metrics.json
+```
+Step 1: python -m graders.baseline --split all
+        → results/baseline_metrics.json
 
-### Key Results Summary
+Step 2: python -m graders.static_rubric
+        → results/system2_*_predictions.json
 
-| System | Val QWK | Unseen-A QWK | Unseen-Q QWK |
-|--------|---------|--------------|--------------|
+Step 3: python -m graders.gradeopt.pipeline --iters 3
+        → results/gradeopt_metrics.json
+        → results/gradeopt_notes.json
+
+Step 4: python -m evaluation.evaluate_unseen
+        → results/gradeopt_unseen_metrics.json
+
+Step 5: python -m evaluation.bertscore_eval
+        → results/bertscore_metrics.json
+
+Step 6: python -m adversarial.test_adversarial_data
+        → results/adversarial_metrics.json
+```
+
+---
+
+## Key Results Summary
+
+### Grading Performance (QWK)
+
+| System | Val | Unseen-A | Unseen-Q |
+|--------|-----|----------|----------|
 | Baseline | 0.357 | 0.440 | 0.380 |
 | Static Rubric | 0.609 | 0.664 | 0.548 |
 | GradeOpt | 0.638 | 0.653 | 0.473 |
 
+### Feedback Quality (BERTScore F1)
+
 | Split | BERTScore F1 |
 |-------|-------------|
-| Val (best iter) | 0.8889 |
+| Val Iter 1 | 0.8881 |
+| Val Iter 2 | 0.8889 |
+| Val Iter 3 | 0.8886 |
 | Unseen Answers | 0.8886 |
 | Unseen Questions | 0.8911 |
 
-| Attack Type | Baseline OGR | Static Rubric OGR | GradeOpt OGR |
-|-------------|-------------|-------------------|--------------|
-| Keyword Stuffing | 97.5% | 95.0% | 90.0% |
-| Fluent but Wrong | 32.5% | 10.0% | 25.0% |
-| Off-topic | 0.0% | 0.0% | 0.0% |
-| Flattery | 0.0% | 0.0% | 0.0% |
+### Adversarial Robustness (Over-Grading Rate %)
+
+| Attack Type | Baseline | Static Rubric | GradeOpt (no notes) | GradeOpt |
+|-------------|----------|---------------|---------------------|----------|
+| Keyword Stuffing | 97.5 | 95.0 | 92.5 | 90.0 |
+| Fluent but Wrong | 32.5 | 10.0 | 25.0 | 25.0 |
+| Off-topic | 0.0 | 0.0 | 0.0 | 0.0 |
+| Flattery | 0.0 | 0.0 | 0.0 | 0.0 |
+
+> Lower Over-Grading Rate = more robust system
 
 ---
 
@@ -249,7 +285,9 @@ All settings are centralized in `config.py`:
 | `BATCH_DELAY` | `0.1` | Seconds between API calls |
 | `TRAIN_PATH` | `data/train.csv` | Training data path |
 | `VAL_PATH` | `data/val.csv` | Validation data path |
-| `LABEL_MAP` | `{0: "incorrect", ...}` | Label integer to string |
+| `UNSEEN_ANS_PATH` | `data/unseen_answers.csv` | Unseen answers path |
+| `UNSEEN_Q_PATH` | `data/unseen_question.csv` | Unseen questions path |
+| `LABEL_MAP` | `{0: "incorrect", 1: "partially correct", 2: "correct"}` | Label mapping |
 
 ---
 
@@ -259,9 +297,10 @@ All settings are centralized in `config.py`:
 |---------|----------|
 | `ModuleNotFoundError` | Run `conda activate gradepal` first |
 | `429 RESOURCE_EXHAUSTED` | Daily quota hit — wait until midnight PST or switch API key |
-| `503 UNAVAILABLE` | Model overloaded — script retries automatically |
+| `503 UNAVAILABLE` | Model temporarily overloaded — script retries automatically |
 | `404 NOT_FOUND` for model | Check available models at aistudio.google.com |
-| Pipeline interrupted | Just rerun — checkpoint resumes from last saved row |
+| Pipeline interrupted | Just rerun — checkpoint resumes from last saved row automatically |
+| `(base)` instead of `(gradepal)` | Run `conda activate gradepal` |
 
 ---
 
