@@ -2,12 +2,12 @@
   "keyword": {
     "Baseline": 0.975,
     "Static Rubric": 0.95,
-    "GradeOpt": 0.925
+    "GradeOpt": 0.9
   },
   "fluent_wrong": {
     "Baseline": 0.325,
     "Static Rubric": 0.25,
-    "GradeOpt": 0.275
+    "GradeOpt": 0.325
   },
   "off_topic": {
     "Baseline": 0.0,

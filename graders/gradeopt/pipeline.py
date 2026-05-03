@@ -164,8 +164,7 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
     if args.use_adv_train:
         print(f"Loading adversarial training data from {ADV_TRAIN_PATH}")
         
-        adv_train_df = pd.read_csv(ADV_TRAIN_PATH)
-        train_df = pd.concat([train_df, adv_train_df], ignore_index=True)
+        train_df = pd.read_csv(ADV_TRAIN_PATH)
         train_df = train_df.sample(frac=1, random_state=42).reset_index(drop=True)
 
     print(f"Training size: {len(train_df)}")
@@ -181,8 +180,7 @@ def run_pipeline(n_iters: int = 1, sample: int = None) -> None:
     val_df = pd.read_csv(VAL_PATH)
     if args.use_adv_train:
         print(f"Loading adversarial validation data from {ADV_VAL_PATH}")
-        adv_val_df = pd.read_csv(ADV_VAL_PATH)
-        val_df = pd.concat([val_df, adv_val_df], ignore_index=True)
+        val_df = pd.read_csv(ADV_VAL_PATH)
         val_df = val_df.sample(frac=1, random_state=42).reset_index(drop=True)
     
     if sample is not None:

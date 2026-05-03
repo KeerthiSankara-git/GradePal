@@ -165,7 +165,7 @@ def main():
 
     # load optimized notes for GradeOpt
     grading_notes = {}
-    notes_path = Path("results/gradeopt_notes.json")
+    notes_path = Path("results/gradeopt_adv/gradeopt_notes.json")
     if notes_path.exists():
         with open(notes_path) as f:
             grading_notes = json.load(f)

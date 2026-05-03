@@ -73,22 +73,22 @@
   },
   {
     "system": "GradeOpt",
-    "over_grading_rate": 0.3,
-    "avg_predicted_score": 0.475,
+    "over_grading_rate": 0.3063,
+    "avg_predicted_score": 0.5062,
     "n_examples": 160,
     "per_attack_type": {
       "keyword": {
-        "over_grading_rate": 0.925,
-        "pct_0": 0.075,
-        "pct_1": 0.275,
-        "pct_2": 0.65,
+        "over_grading_rate": 0.9,
+        "pct_0": 0.1,
+        "pct_1": 0.125,
+        "pct_2": 0.775,
         "count": 40
       },
       "fluent_wrong": {
-        "over_grading_rate": 0.275,
-        "pct_0": 0.725,
-        "pct_1": 0.225,
-        "pct_2": 0.05,
+        "over_grading_rate": 0.325,
+        "pct_0": 0.675,
+        "pct_1": 0.3,
+        "pct_2": 0.025,
         "count": 40
       },
       "off_topic": {

@@ -1,10 +1,26 @@
 [
   {
     "split": "iter_1_val",
-    "accuracy": 0.641,
-    "quadratic_wk": 0.5994,
-    "weighted_f1": 0.6377,
-    "macro_f1": 0.6524,
+    "accuracy": 0.6454,
+    "quadratic_wk": 0.5941,
+    "weighted_f1": 0.6431,
+    "macro_f1": 0.6544,
     "iteration": 1
+  },
+  {
+    "split": "iter_2_val",
+    "accuracy": 0.6596,
+    "quadratic_wk": 0.622,
+    "weighted_f1": 0.6564,
+    "macro_f1": 0.6619,
+    "iteration": 2
+  },
+  {
+    "split": "iter_3_val",
+    "accuracy": 0.6785,
+    "quadratic_wk": 0.6486,
+    "weighted_f1": 0.6766,
+    "macro_f1": 0.6813,
+    "iteration": 3
   }
 ]
