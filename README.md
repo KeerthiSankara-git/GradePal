@@ -137,12 +137,13 @@ the authors.
 ### Requesting Access
 Request access to EngSAF here:
 **[EngSAF Dataset Access Form](https://docs.google.com/forms/d/e/1FAIpQLSdeRuvfE6b1Jhrhq6p7o_9dsjEvVWO7y9Eqmjun1R4tdWOeUg/viewform)**
-If you need additional help to get access to the data faster, please contact one of the contributors of this project.
 
 To get access to our generated adversarial data, request access in the link below (access already provided to Professors and TAs)
 ```bash
 https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU
 ```
+If you need additional help to get access to the data faster, please contact one of the contributors of this project.
+
 
 Once approved, you will receive the following CSV files. Place them in the 
 `data/` folder:
