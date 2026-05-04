@@ -90,6 +90,17 @@ GradePal/
 └── README.md
 ```
 
+
+---
+
+## Dataset Access
+
+### Request access to the EngSAF dataset using the link below
+https://docs.google.com/forms/d/e/1FAIpQLSdeRuvfE6b1Jhrhq6p7o_9dsjEvVWO7y9Eqmjun1R4tdWOeUg/viewform
+
+### To get access to our generated adversarial data, request access in the link below
+https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU
+
 ---
 
 ## Environment Setup
