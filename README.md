@@ -133,7 +133,12 @@ the authors.
 
 ### Requesting Access
 Request access to EngSAF here:
-👉 **[EngSAF Dataset Access Form](https://docs.google.com/forms/d/e/1FAIpQLSdeRuvfE6b1Jhrhq6p7o_9dsjEvVWO7y9Eqmjun1R4tdWOeUg/viewform)**
+**[EngSAF Dataset Access Form](https://docs.google.com/forms/d/e/1FAIpQLSdeRuvfE6b1Jhrhq6p7o_9dsjEvVWO7y9Eqmjun1R4tdWOeUg/viewform)**
+
+To get access to our generated adversarial data, request access in the link below (access already provided to Professors and TAs)
+```bash
+https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU
+```
 
 Once approved, you will receive the following CSV files. Place them in the 
 `data/` folder:
@@ -145,11 +150,7 @@ data/unseen_question.csv
 data/adversarial_dataset_with_feedback.csv
 ```
 
-To get access to our generated adversarial data, request access in the link below (access already provided to Professors and TAs)
-```bash
-https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU
-```
-Copy this data also into the `data/` folder of the project. 
+
 
 ### Step 6 — Verify setup
 ```bash
