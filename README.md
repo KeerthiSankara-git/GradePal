@@ -105,6 +105,8 @@ https://docs.google.com/forms/d/e/1FAIpQLSdeRuvfE6b1Jhrhq6p7o_9dsjEvVWO7y9Eqmjun
 https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU
 ```
 
+After the above 2 steps, copy the data from both these folders into the data/ folder of the project
+
 ---
 
 ## Environment Setup
