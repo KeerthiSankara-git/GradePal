@@ -7,13 +7,13 @@ CSCI 544 Applied NLP — Team 20 | University of Southern California
 
 ## Team Details
 
-| Name | USC ID | Role |
+| Name | USC email | Role |
 |------|--------|------|
-| Keerthi Sankaralingam | sankaral | Infrastructure, GradeOpt Pipeline |
-| Prajaktha Nelamangala Jayakumar | pnelaman | Grader, Reflector, Refiner Agents |
-| Dhyey Shah | dhyeyvsh | Baseline Grader |
-| Sharvari Patil | sharvari | Static Rubric Grader |
-| Poojasree Dwarakanath | pdwaraka | Dataset Analysis, Adversarial Evaluation |
+| Keerthi Sankaralingam | sankaral@usc.edu | Infrastructure, GradeOpt Pipeline |
+| Prajaktha Nelamangala Jayakumar | pnelaman@usc.edu | Grader, Reflector, Refiner Agents |
+| Dhyey Shah | dhyeyvsh@usc.edu | Baseline Grader |
+| Sharvari Patil | sharvari@usc.edu | Static Rubric Grader |
+| Poojasree Dwarakanath | pdwaraka@usc.edu | Dataset Analysis, Adversarial Evaluation |
 
 ---
 
