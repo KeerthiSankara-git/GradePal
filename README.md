@@ -363,7 +363,7 @@ All settings are centralized in `config.py`:
 1. **GradeOpt** — Chu, Y., Li, H., Yang, K., Shomer, H., Liu, H., Copur-Gencturk, Y., & Tang, J. (2025).
    *A LLM-Powered Automatic Grading Framework with Human-Level Guidelines Optimization.*
    In Proceedings of the 18th International Conference on Educational Data Mining (EDM 2025).
-   https://doi.org/10.5281/zenodo.15870201
+   https://arxiv.org/abs/2410.02165
 
 2. **EngSAF** — Aggarwal, D., Sil, P., Raman, B., & Bhattacharyya, P. (2025).
    *"I understand why I got this grade": Automatic Short Answer Grading with Feedback.*
