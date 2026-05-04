@@ -93,23 +93,6 @@ GradePal/
 
 ---
 
-## Dataset Access
-
-### Request access to the EngSAF dataset using the link below
-```bash
-https://docs.google.com/forms/d/e/1FAIpQLSdeRuvfE6b1Jhrhq6p7o_9dsjEvVWO7y9Eqmjun1R4tdWOeUg/viewform
-```
-
-### To get access to our generated adversarial data, request access in the link below
-```bash
-https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU
-```
-
-After the above 2 steps, copy the data from both these folders into the data/ folder of the project. 
-Note: We have provided access to the adversarial drive link to the Professors and TAs.
-
----
-
 ## Environment Setup
 
 ### Step 1 — Clone the repository
@@ -161,6 +144,12 @@ data/unseen_answers.csv
 data/unseen_question.csv
 data/adversarial_dataset_with_feedback.csv
 ```
+
+To get access to our generated adversarial data, request access in the link below (access already provided to Professors and TAs)
+```bash
+https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU
+```
+Copy this data also into the `data/` folder of the project. 
 
 ### Step 6 — Verify setup
 ```bash
