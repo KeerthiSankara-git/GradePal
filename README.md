@@ -251,6 +251,15 @@ python -m adversarial.test_adversarial_data
 ```
 Results saved to `results/adversarial_metrics.json`
 
+
+### Adding Adversarial data to the Gradeopt Training pipeline
+In order to test how Gradeopt performs when adversarial data is part of the grader pipeline, use the `/adv_train` folder fron the drive link 2. Then run the gradeopt pipeline command using the following flags - 
+```bash
+python -m graders.gradeopt.pipeline --iters <number_of_iterations> --use_adv_train --run_name <name_for_saving_results>
+# Example command:
+# python -m graders.gradeopt.pipeline --iters 3 --use_adv_train --run_name gradeopt_adv 
+```
+
 ---
 
 ## How Results Are Generated
