@@ -177,6 +177,7 @@ print('Setup complete!')
 python -m adversarial.original_dataset_analysis
 ```
 Results saved to `adversarial/results/original_dataset_analysis_results`
+This folder contains the graphs and plots showing our analysis of the original EngSAF dataset.
 
 
 ### System 1 — Baseline Grader
