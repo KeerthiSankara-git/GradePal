@@ -236,13 +236,13 @@ Results saved to `results/bertscore_metrics.json`
 ---
 
 ### Adversarial Dataset Generation
-Both these commands are just run once and results are saved to the data folder
+These were the commands used to generate the adversarial data and get the splits. You do not have to run these commmands.
 ```bash
 python -m adversarial.generate_adversarial_dataset
 # Creating data split
 python -m adversarial.split_adv_data
 ```
-Results saved to `results/adversarial_dataset.csv`
+The results after running these commands are stored in the 2nd drive link (`https://drive.google.com/drive/u/0/folders/1gooIgs8Hk1RwbHc7CvokgW_SHZj8njTU`), and these files can directly be downloaded.
 
 
 ### Adversarial Robustness Evaluation
