@@ -56,11 +56,11 @@ Return ONLY a JSON object in this exact format, nothing else:
 }}
 
 Rules:
-•⁠ correct = student fully understood and answered the question
-•⁠ partially correct = student showed some understanding but missed key points
-•⁠ incorrect = student misunderstood or did not address the question
-•⁠ feedback must be specific to the answer, not generic
-•⁠ feedback must reference what the correct answer expects
+- correct = student fully understood and answered the question
+- partially correct = student showed some understanding but missed key points
+- incorrect = student misunderstood or did not address the question
+- feedback must be specific to the answer, not generic
+- feedback must reference what the correct answer expects
 """
 
 
