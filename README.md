@@ -156,7 +156,16 @@ data/unseen_question.csv
 data/adversarial_dataset.csv
 ```
 
+### Dataset Schema
 
+| Column | Type | Description |
+|--------|------|-------------|
+| `Question_id` | float | Unique question identifier |
+| `Question` | str | The exam question |
+| `Student Answer` | str | Student's response |
+| `Correct Answer` | str | Reference answer |
+| `output_label` | int | 0 = incorrect, 1 = partially correct, 2 = correct |
+| `feedback` | str | Gold feedback explaining the label |
 
 ### Step 6 — Verify setup
 ```bash
