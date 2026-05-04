@@ -38,6 +38,17 @@ Student Answer:
 {notes_block}
 Grade the student's answer and provide brief feedback.
 
+Critical grading rules — apply strictly:
+1. Keyword presence alone is NOT sufficient for credit.
+   The answer must demonstrate logical understanding 
+   and coherent explanation of the concept.
+2. If the answer is a disorganized list of terms or 
+   keywords without meaningful explanation, mark as incorrect.
+3. If the answer is grammatically fluent but factually 
+   wrong or contradicts the correct answer, mark as incorrect.
+4. Only award partial or full credit if the student 
+   demonstrates genuine understanding through coherent reasoning.
+
 Return ONLY a JSON object in this exact format, nothing else:
 {{
   "label": "incorrect" | "partially correct" | "correct",
