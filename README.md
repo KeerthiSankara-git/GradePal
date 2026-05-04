@@ -56,7 +56,10 @@ GradePal/
 │   ├── val.csv
 │   ├── unseen_answers.csv
 │   ├── unseen_question.csv
-│   └── adversarial_dataset.csv
+│   ├── adversarial_dataset.csv
+|   └── adv_train/                 # Used only for gradeopt pipeline iterations with adversarial data 
+|       ├── original_plus_adv_train.csv
+|       └── Original_plus_adv_val.csv
 ├── graders/                       # All three grading systems
 │   ├── baseline.py                # System 1 — no rubric (Dhyey)
 │   ├── static_rubric.py           # System 2 — static rubric (Sharvari)
@@ -253,7 +256,7 @@ Results saved to `results/adversarial_metrics.json`
 
 
 ### Adding Adversarial data to the Gradeopt Training pipeline
-In order to test how Gradeopt performs when adversarial data is part of the grader pipeline, use the `/adv_train` folder fron the drive link 2. Then run the gradeopt pipeline command using the following flags - 
+In order to test how Gradeopt performs when adversarial data is part of the grader pipeline, use the `/adv_train` folder fron the drive link 2, and add it to your data folder. Then run the gradeopt pipeline command using the following flags - 
 ```bash
 python -m graders.gradeopt.pipeline --iters <number_of_iterations> --use_adv_train --run_name <name_for_saving_results>
 # Example command:
