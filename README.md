@@ -204,7 +204,7 @@ Results saved to `results/system2_val_predictions.json`
 
 ### System 3 — GradeOpt Pipeline
 ```bash
-# Full run — 3 iterations on all 3,662 training examples (~9 hours)
+# Full run — 3 iterations on all 3,662 training examples (~20 hours)
 python -m graders.gradeopt.pipeline --iters 3
 
 # Development mode — quick test on 50 examples
