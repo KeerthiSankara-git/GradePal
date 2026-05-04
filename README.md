@@ -358,4 +358,27 @@ All settings are centralized in `config.py`:
 
 ---
 
+## References
+
+1. **GradeOpt** — Chu, Y., Li, H., Yang, K., Shomer, H., Liu, H., Copur-Gencturk, Y., & Tang, J. (2025).
+   *A LLM-Powered Automatic Grading Framework with Human-Level Guidelines Optimization.*
+   In Proceedings of the 18th International Conference on Educational Data Mining (EDM 2025).
+   https://doi.org/10.5281/zenodo.15870201
+
+2. **EngSAF** — Aggarwal, D., Sil, P., Raman, B., & Bhattacharyya, P. (2025).
+   *"I understand why I got this grade": Automatic Short Answer Grading with Feedback.*
+   arXiv preprint arXiv:2407.12818.
+   https://arxiv.org/abs/2407.12818
+
+3. **GradingAttack** — Li, X., Zhou, Z., Liu, Z., Wu, Y., & Luo, W. (2026).
+   *GradingAttack: Attacking Large Language Models Towards Short Answer Grading Ability.*
+   arXiv preprint arXiv:2602.00979.
+   https://arxiv.org/abs/2602.00979
+
+4. **LLM Evaluation** — Todorov, A., Klunder, E., & Belloni, J. E. (2025).
+   *Evaluating the Potential of LLMs for Better Short Answer Scoring.*
+   In Proceedings of the 17th International Conference on Computer Supported Education
+   (CSEDU 2025), pages 108–119.
+   https://doi.org/10.5220/0013291700003932
+
 *GradePal — CSCI 544 Team 20 — University of Southern California — Spring 2026*
