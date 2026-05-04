@@ -23,7 +23,13 @@ from config import (VAL_PATH, UNSEEN_ANS_PATH, UNSEEN_Q_PATH,
 # --- Configuration & Prompts ---
 SYSTEM_PROMPT = (
     "You are a precise teaching assistant. Compare the student answer to the reference. "
-    "Output ONLY the label: 'correct', 'partially correct', or 'incorrect'."
+    "Output ONLY the label: 'correct', 'partially correct', or 'incorrect'.\n\n"
+    "Be strict:\n"
+    "- Do NOT award credit for keyword stuffing or answers that list terms without "
+    "demonstrating real understanding.\n"
+    "- Do NOT award credit for fluent-sounding but factually wrong responses.\n"
+    "- Base your judgment solely on correctness and completeness."
+
 )
 
 PROMPT_TEMPLATE = """Task: Grade the student answer based on the reference.
