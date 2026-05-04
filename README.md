@@ -124,7 +124,18 @@ Get a free API key at [aistudio.google.com](https://aistudio.google.com).
 > **Never commit your `.env` file.**
 
 ### Step 5 — Add the dataset
-Download the EngSAF dataset and place CSV files in the `data/` folder:
+## Dataset — EngSAF
+
+We use the **EngSAF dataset** for automatic short-answer grading with feedback.
+The dataset is not publicly available — access must be requested directly from 
+the authors.
+
+### Requesting Access
+Request access to EngSAF here:
+👉 **[EngSAF Dataset Access Form](https://docs.google.com/forms/d/e/1FAIpQLSdeRuvfE6b1Jhrhq6p7o_9dsjEvVWO7y9Eqmjun1R4tdWOeUg/viewform)**
+
+Once approved, you will receive the following CSV files. Place them in the 
+`data/` folder:
 ```
 data/train.csv
 data/val.csv
