@@ -41,7 +41,7 @@ We compare three grading systems:
 | Conda environment | `gradepal` |
 | LLM | Google Gemini 2.5 Flash via `google-genai` package |
 | API | Google AI Studio (paid tier, 10,000 RPD) |
-| Runtime | GradeOpt full pipeline (~9 hours on 3,662 training examples, 3 iterations) |
+| Runtime | GradeOpt full pipeline (~20 hours on 3,662 training examples, 3 iterations) |
 
 > **Note:** All experiments were run on personal MacBook laptops using the Gemini API. No GPU required — all inference is API-based.
 
